@@ -93,12 +93,9 @@ pub fn client_info_to_use(advertised: &AnisetteClientInfo) -> AnisetteClientInfo
             user_agent: AKD_USER_AGENT.to_string(),
         };
     }
-    if mac_version(client).is_some_and(|version| version < (10, 13)) {
-        return AnisetteClientInfo {
-            client_info: CURRENT_MAC_CLIENT_INFO.to_string(),
-            user_agent: CURRENT_MAC_USER_AGENT.to_string(),
-        };
-    }
+    // Patched like iloader 2.4.2: keep the server's old Mac client info, since
+    // Apple's GSA answers CURRENT_MAC_CLIENT_INFO with 503 from 2026-11-20.
+    let _ = (CURRENT_MAC_CLIENT_INFO, CURRENT_MAC_USER_AGENT, mac_version(client));
     let user_agent = advertised.user_agent.trim();
     AnisetteClientInfo {
         client_info: client.to_string(),
